@@ -41,6 +41,87 @@ class WumpusWorld {
    	 System.out.println("\nInitial state:");
    	 printBoard(row, col);
    	 
+   	 while(!Board[row][col].hasGold) {
+   		 
+   		 Board[row][col].isVisited = true;
+   		 Board[row][col].pitStatus = Block.NOT_PRESENT;
+   		 Board[row][col].wumpusStatus = Block.NOT_PRESENT;
+   		 
+   		 if(!Board[row][col].hasBreeze) {
+   			 if(row >= 1 && Board[row-1][col].pitStatus == Block.UNSURE)
+   				 Board[row-1][col].pitStatus = Block.NOT_PRESENT;
+   			 if(row <= (boardSize-2) && Board[row+1][col].pitStatus == Block.UNSURE)
+   				 Board[row+1][col].pitStatus = Block.NOT_PRESENT;
+   			 if(col >= 1 && Board[row][col-1].pitStatus == Block.UNSURE)
+   				 Board[row][col-1].pitStatus = Block.NOT_PRESENT;
+   			 if(col <= (boardSize-2) && Board[row][col+1].pitStatus == Block.UNSURE)
+   				 Board[row][col+1].pitStatus = Block.NOT_PRESENT;
+   		 }
+   		 
+   		 if(!Board[row][col].hasStench) {
+   			 if(row >= 1 && Board[row-1][col].wumpusStatus == Block.UNSURE)
+   				 Board[row-1][col].wumpusStatus = Block.NOT_PRESENT;
+   			 if(row <= (boardSize-2) && Board[row+1][col].wumpusStatus == Block.UNSURE)
+   				 Board[row+1][col].wumpusStatus = Block.NOT_PRESENT;
+   			 if(col >= 1 && Board[row][col-1].wumpusStatus == Block.UNSURE)
+   				 Board[row][col-1].wumpusStatus = Block.NOT_PRESENT;
+   			 if(col <= (boardSize-2) && Board[row][col+1].wumpusStatus == Block.UNSURE)
+   				 Board[row][col+1].wumpusStatus = Block.NOT_PRESENT;
+   		 }
+ 
+   		 boolean foundNewPath = false;
+   		 
+   		 if(row >= 1 && !((row-1) == rPrev && col == cPrev) && Board[row-1][col].isVisited == false && Board[row-1][col].pitStatus == Block.NOT_PRESENT && Board[row-1][col].wumpusStatus == Block.NOT_PRESENT) {
+   			 rPrev = row;
+   			 cPrev = col;
+   			 
+   			 row--;
+   			 foundNewPath = true;
+   		 }
+   		 else if(row <= (boardSize-2) && !((row+1) == rPrev && col == cPrev) && Board[row+1][col].isVisited == false && Board[row+1][col].pitStatus == Block.NOT_PRESENT && Board[row+1][col].wumpusStatus == Block.NOT_PRESENT) {
+   			 rPrev = row;
+   			 cPrev = col;
+   			 
+   			 row++;
+   			 foundNewPath = true;
+   		 }
+   		 else if(col >= 1 && !(row == rPrev && (col-1) == cPrev) && Board[row][col-1].isVisited == false && Board[row][col-1].pitStatus == Block.NOT_PRESENT && Board[row][col-1].wumpusStatus == Block.NOT_PRESENT) {
+   			 rPrev = row;
+   			 cPrev = col;
+   			 
+   			 col--;
+   			 foundNewPath = true;
+   		 }
+   		 else if(col <= (boardSize-2) && !(row == rPrev && (col+1) == cPrev) && Board[row][col+1].isVisited == false && Board[row][col+1].pitStatus == Block.NOT_PRESENT && Board[row][col+1].wumpusStatus == Block.NOT_PRESENT) {
+   			 rPrev = row;
+   			 cPrev = col;
+   			 
+   			 col++;
+   			 foundNewPath = true;
+   		 }
+   		 
+   		 if(!foundNewPath) {
+   			 int temp1 = rPrev;
+   			 int temp2 = cPrev;
+   			 
+   			 rPrev = row;
+   			 cPrev = col;
+   			 
+   			 row = temp1;
+   			 col = temp2;
+   		 }
+   		 
+   		 moves++;
+ 
+   		 System.out.println("\n\nMove " + moves + ":");
+   		 printBoard(row, col);
+ 
+   		 if(moves > boardSize*boardSize) {
+   			 System.out.println("\nNo solution found!");
+   			 break;
+   		 }
+   	 }
+   	 
    	 if(moves <= boardSize*boardSize)
    		 System.out.println("\nFound gold in " + moves + " moves.");
    	 
